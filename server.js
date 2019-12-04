@@ -1,4 +1,6 @@
-const express = require('express'),
+const  Chat  = require("./models/FontSchema"),
+connect  = require("./db"),
+express = require('express'),
 http = require('http'),
 app = express(),
 server = http.createServer(app),
