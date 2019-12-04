@@ -51,6 +51,7 @@ io.on('connection', (socket) => {
             }
         }
 
+        console.log(font);
         Font.findOneAndUpdate(id, font, { new: true }, function (err, doc) {
             if (err) return res.send(500, { error: err });
             return console.log('Updated: '+mTitle);
