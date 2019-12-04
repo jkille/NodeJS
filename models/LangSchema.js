@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const FontSchema = new Schema(
+const LangSchema = new Schema(
     {
         name: {
             type: String
@@ -13,5 +13,5 @@ const FontSchema = new Schema(
         timestamps: true
     });
 
-let Font = mongoose.model("Lang", FontSchema);
-module.exports = Font;
+let Lang = mongoose.model("Lang", LangSchema);
+module.exports = Lang;
