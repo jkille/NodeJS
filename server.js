@@ -6,7 +6,13 @@ const Font = require("./models/FontSchema"),
     server = http.createServer(app)
 io = require('socket.io').listen(server);
 app.get('/', (req, res) => {
-    res.send('Succesfully!');
+
+  connect.then(db => {
+        Font.find({}).then(font => {
+            res.send(font);
+        });
+    });
+    
     //Read
     // connect.then(db => {
     //     Font.find({}).then(font => {
@@ -23,29 +29,19 @@ app.get('/', (req, res) => {
 
 
 io.on('connection', (socket) => {
-
     socket.on('open', function (userNickname) {
         console.log(userNickname + " : has open the app ");
-        connect.then(db => {
-            Font.find({}).then(font => {
-                socket.broadcast.emit('useropentheapp', font);
+            Font.find({},{title:1}).then(font => {
+                io.emit('useropentheapp', font);
             });
-        });
     });
 
 
-    socket.on('messagedetection', (senderNickname, messageContent) => {
-
-        //log the message in console 
-
-        console.log(senderNickname + " :" + messageContent)
-        //create a message object 
-        let message = { "message": messageContent, "senderNickname": senderNickname }
-        // send the message to the client side  
-        io.emit('message', message);
-
+    socket.on('upload', (mTitle,mUrl,mNew,mThumbnail,mSize,mAuthor,mDesigner) => {
+        let font = new Font({title : mTitle,url:mUrl,is_new: mNew,size:mSize,thumbnail:mThumbnail,author:mAuthor,designer:mDesigner,count: "1"});
+        font.save();
+        console.log(mTitle + " : Saved");
     });
-
 
     socket.on('disconnect', function () {
         console.log(' user has left ')
