@@ -25,6 +25,9 @@ const FontSchema = new Schema(
         },
         count: {
             type: String
+        },
+        language: {
+            type: String
         }
     },
     {

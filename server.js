@@ -37,8 +37,8 @@ io.on('connection', (socket) => {
     });
 
 
-    socket.on('upload', (mTitle,mUrl,mNew,mThumbnail,mSize,mAuthor,mDesigner) => {
-        let font = new Font({title : mTitle,url:mUrl,is_new: mNew,size:mSize,thumbnail:mThumbnail,author:mAuthor,designer:mDesigner,count: "1"});
+    socket.on('upload', (mTitle,mUrl,mNew,mThumbnail,mSize,mAuthor,mDesigner,mLanguage) => {
+        let font = new Font({title : mTitle,url:mUrl,is_new: mNew,size:mSize,thumbnail:mThumbnail,author:mAuthor,designer:mDesigner,count: "1",language:mLanguage});
         font.save();
         console.log(mTitle + " : Saved");
     });
@@ -46,10 +46,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', function () {
         console.log(' user has left ')
         socket.broadcast.emit("userdisconnect", " user has left ")
-
     });
-
-
 
 });
 
