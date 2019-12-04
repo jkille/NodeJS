@@ -1,5 +1,7 @@
 const Font = require("./models/FontSchema"),
-    connect = require("./db"),
+    Lang = require("./models/LangSchema"),
+    font_db = require("./db/font_db"),
+    lang_db = require("./db/lang_db"),
     express = require('express'),
     http = require('http'),
     app = express(),
@@ -7,12 +9,12 @@ const Font = require("./models/FontSchema"),
 io = require('socket.io').listen(server);
 app.get('/', (req, res) => {
 
-  connect.then(db => {
-        Font.find({}).then(font => {
-            res.send(font);
+      font_db.then(db => {
+            Font.find({}).then(font => {
+                res.send(font);
+            });
         });
-    });
-    
+
     //Read
     // connect.then(db => {
     //     Font.find({}).then(font => {
@@ -31,16 +33,27 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     socket.on('open', function (userNickname) {
         console.log(userNickname + " : has open the app ");
-            Font.find({},{title:1}).then(font => {
-                io.emit('useropentheapp', font);
-            });
+
+        Font.find({}, { title: 1 }).then(font => {
+            io.emit('useropentheapp', font);
+        });
+
+        Lang.find({}).then(lang => {
+            io.emit('lang', lang);
+        });
     });
 
 
-    socket.on('upload', (mTitle,mUrl,mNew,mThumbnail,mSize,mAuthor,mDesigner,mLanguage) => {
-        let font = new Font({title : mTitle,url:mUrl,is_new: mNew,size:mSize,thumbnail:mThumbnail,author:mAuthor,designer:mDesigner,count: "1",language:mLanguage});
+    socket.on('add_font', (mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage) => {
+        let font = new Font({ title: mTitle, url: mUrl, is_new: mNew, size: mSize, thumbnail: mThumbnail, author: mAuthor, designer: mDesigner, count: "1", language: mLanguage });
         font.save();
         console.log(mTitle + " : Saved");
+    });
+
+    socket.on('add_lang', (mId, mName) => {
+        let lang = new Lang({ name: mName, id: mId });
+        lang.save();
+        console.log(name + " : Saved");
     });
 
     socket.on('disconnect', function () {
@@ -49,9 +62,6 @@ io.on('connection', (socket) => {
     });
 
 });
-
-
-
 
 
 server.listen(3000, () => {
