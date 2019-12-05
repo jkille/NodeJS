@@ -1,7 +1,6 @@
 const Font = require("./models/FontSchema"),
     Lang = require("./models/LangSchema"),
     font_db = require("./db/font_db"),
-    lang_db = require("./db/lang_db"),
     express = require('express'),
     http = require('http'),
     app = express(),
@@ -10,6 +9,11 @@ io = require('socket.io').listen(server);
 
 
 app.get('/', (req, res) => {
+
+    Font.db.db.listCollections().toArray(function (err, names) {
+        console.log(names); // [{ name: 'dbname.myCollection' }]
+    });
+
     if(req.query.title !=null){
         console.log("Add Font");
         addFontFromGet(req.query);
