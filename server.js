@@ -9,31 +9,31 @@ io = require('socket.io').listen(server);
 
 
 app.get('/', (req, res) => {
-
-    Font.db.db.listCollections().toArray(function (err, names) {
-        console.log(names); // [{ name: 'dbname.myCollection' }]
-    });
-
-    if(req.query.title !=null){
+    if (req.query.title != null) {
         console.log("Add Font");
         addFontFromGet(req.query);
+    } else if (req.query.lang != null) {
+        Lang.find({}).then(lang => {
+            res.send(lang);
+        });
+    } else if (req.query.font != null) {
+        Font.find({}).then(font => {
+            res.send(font);
+        });
     }
-    
-    Font.find({}).then(font => {
-        res.send(font);
-    });
 
-    // font_db.then(db => {
-        if(req.query.delete !=null){
-            Font.deleteMany({}, function(err) {
-                console.log("Remove: "+err);
+
+    font_db.then(db => {
+        if (req.query.delete != null) {
+            Font.deleteMany({}, function (err) {
+                console.log("Remove: " + err);
             })
         }
-    // });
+    });
 });
 
 function getFontById(id) {
-    Font.findOne({_id:id}, { 
+    Font.findOne({ _id: id }, {
         is_new: 0,
         thumbnail: 0,
         count: 0,
@@ -43,7 +43,7 @@ function getFontById(id) {
 }
 
 function loadFonts() {
-    Font.find({}, { 
+    Font.find({}, {
         is_new: 1,
         thumbnail: 1,
         count: 1,
@@ -73,18 +73,18 @@ function updateFont(id, mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigne
 }
 
 
-function updateCount(id,mCount) {
-    var font = { count: mCount};
+function updateCount(id, mCount) {
+    var font = { count: mCount };
     Font.findOneAndUpdate(id, font, { new: true }, function (err, doc) {
         if (err) return res.send(500, { error: err });
-        loadFonts();getFontById(id); return console.log('Updated: ' + mTitle);
+        loadFonts(); getFontById(id); return console.log('Updated: ' + mTitle);
     });
 }
 
 function addFont(mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage) {
     let font = new Font({ title: mTitle, url: mUrl, is_new: mNew, size: mSize, thumbnail: mThumbnail, author: mAuthor, designer: mDesigner, count: "1", language: mLanguage });
     font.save().then(() => {
-        console.log(mTitle + " : "+mLanguage);
+        console.log(mTitle + " : " + mLanguage);
         loadFonts();
     }).catch((e) => {
         console.log('There was an error', e.message);
@@ -94,7 +94,7 @@ function addFont(mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLan
 function addFontFromGet(data) {
     let font = new Font(data);
     font.save().then(() => {
-        console.log(data.title + " : "+data.language);
+        console.log(data.title + " : " + data.language);
         loadFonts();
     }).catch((e) => {
         console.log('There was an error', e.message);
@@ -129,12 +129,12 @@ io.on('connection', (socket) => {
         loadLangs();
     });
 
-    
+
     socket.on('update_font', (id, mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage) => {
         updateFont(id, mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage);
     });
 
-    socket.on('get_font_detail',(id) => {
+    socket.on('get_font_detail', (id) => {
         getFontById(id);
     });
 
@@ -159,6 +159,6 @@ io.on('connection', (socket) => {
 
 
 server.listen(3001, () => {
-    console.log('Node app is running on port 3000');
+    console.log('Node app is running on port 3001');
 
 });

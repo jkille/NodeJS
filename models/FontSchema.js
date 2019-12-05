@@ -38,5 +38,6 @@ const FontSchema = new Schema(
         timestamps: true
     });
 
-let Font = mongoose.model("fonts", FontSchema,"zfont");
+mongoose.models = {};
+let Font = mongoose.model("zfont", FontSchema,"fonts");
 module.exports = Font;
