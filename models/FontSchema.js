@@ -9,7 +9,8 @@ const FontSchema = new Schema(
             type: String
         },
         is_new:{
-            type: String
+            type: Boolean,
+            default: false
         },
         size:{
             type: String
@@ -18,13 +19,16 @@ const FontSchema = new Schema(
             type: String
         },
         author: {
-            type: String
+            type: String,
+            default: 'zFont'
         },
         designer: {
-            type: String
+            type: String,
+            default: 'zFont'
         },
         count: {
-            type: String
+            type: String,
+            default: '0'
         },
         language: {
             type: String
@@ -34,5 +38,5 @@ const FontSchema = new Schema(
         timestamps: true
     });
 
-let Font = mongoose.model("zFont", FontSchema);
+let Font = mongoose.model("zFont", FontSchema,'fonts');
 module.exports = Font;

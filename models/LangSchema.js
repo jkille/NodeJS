@@ -13,5 +13,5 @@ const LangSchema = new Schema(
         timestamps: true
     });
 
-let Lang = mongoose.model("Lang", LangSchema);
+let Lang = mongoose.model("zFont", LangSchema,'languages');
 module.exports = Lang;

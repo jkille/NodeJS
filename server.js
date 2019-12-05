@@ -7,13 +7,25 @@ const Font = require("./models/FontSchema"),
     app = express(),
     server = http.createServer(app)
 io = require('socket.io').listen(server);
-app.get('/', (req, res) => {
 
-    font_db.then(db => {
-        Font.find({}).then(font => {
-            res.send(font);
-        });
+
+app.get('/', (req, res) => {
+    if(req.query.title !=null){
+        console.log("Add Font");
+        addFontFromGet(req.query);
+    }
+
+    Font.find({}).then(font => {
+        res.send(font);
     });
+
+    // font_db.then(db => {
+    //     if(req.query.delete !=null){
+    //         Font.deleteMany({}, function(err) {
+    //             console.log("Remove: "+err);
+    //         })
+    //     }
+    // });
 });
 
 function getFontById(id) {
@@ -69,6 +81,16 @@ function addFont(mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLan
     let font = new Font({ title: mTitle, url: mUrl, is_new: mNew, size: mSize, thumbnail: mThumbnail, author: mAuthor, designer: mDesigner, count: "1", language: mLanguage });
     font.save().then(() => {
         console.log(mTitle + " : "+mLanguage);
+        loadFonts();
+    }).catch((e) => {
+        console.log('There was an error', e.message);
+    });
+}
+
+function addFontFromGet(data) {
+    let font = new Font(data);
+    font.save().then(() => {
+        console.log(data.title + " : "+data.language);
         loadFonts();
     }).catch((e) => {
         console.log('There was an error', e.message);
