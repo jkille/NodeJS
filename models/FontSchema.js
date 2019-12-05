@@ -20,11 +20,11 @@ const FontSchema = new Schema(
         },
         author: {
             type: String,
-            default: 'zFont'
+            default:'zFont'
         },
         designer: {
             type: String,
-            default: 'zFont'
+            default:'zFont'
         },
         count: {
             type: String,
@@ -38,5 +38,5 @@ const FontSchema = new Schema(
         timestamps: true
     });
 
-let Font = mongoose.model("zFont", FontSchema,'fonts');
+let Font = mongoose.model("fonts", FontSchema,"fonts");
 module.exports = Font;
