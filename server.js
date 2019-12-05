@@ -10,21 +10,21 @@ io = require('socket.io').listen(server);
 
 
 app.get('/', (req, res) => {
-    // if(req.query.title !=null){
-    //     console.log("Add Font");
-    //     addFontFromGet(req.query);
-    // }
-
+    if(req.query.title !=null){
+        console.log("Add Font");
+        addFontFromGet(req.query);
+    }
+    
     Font.find({}).then(font => {
         res.send(font);
     });
-    
+
     // font_db.then(db => {
-    //     if(req.query.delete !=null){
-    //         Font.deleteMany({}, function(err) {
-    //             console.log("Remove: "+err);
-    //         })
-    //     }
+        if(req.query.delete !=null){
+            Font.deleteMany({}, function(err) {
+                console.log("Remove: "+err);
+            })
+        }
     // });
 });
 

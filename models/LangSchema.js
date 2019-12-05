@@ -13,5 +13,5 @@ const LangSchema = new Schema(
         timestamps: true
     });
 
-let Lang = mongoose.model("langs", LangSchema,"languages");
+let Lang = mongoose.model("langs", LangSchema,'languages');
 module.exports = Lang;
