@@ -2,35 +2,35 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const FontSchema = new Schema(
     {
-        title: {
+        n: {
             type: String
         },
-        url: {
+        u: {
             type: String
         },
-        is_new:{
+        in:{
             type: Boolean,
             default: false
         },
-        size:{
+        s:{
             type: String
         },
-        thumbnail: {
+        t: {
             type: String
         },
-        author: {
+        a: {
             type: String,
-            default:'zFont'
+            default:''
         },
-        designer: {
+        d: {
             type: String,
-            default:'zFont'
+            default:''
         },
-        count: {
+        c: {
             type: String,
             default: '0'
         },
-        language: {
+        l: {
             type: String
         }
     },

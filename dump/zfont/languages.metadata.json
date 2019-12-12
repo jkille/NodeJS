@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"zfont.languages"}],"uuid":"8983a05f2c54490bbda6bd5a1ffaacdd"}

@@ -13,9 +13,9 @@ app.get('/', (req, res) => {
         console.log("Add Font");
         addFontFromGet(req.query);
     } else if (req.query.lang != null) {
-        Lang.find({}).then(lang => {
-            res.send(lang);
-        });
+Lang.find({}).then(lang => {
+res.send(lang);
+    });
     } else if (req.query.font != null) {
         Font.find({}).then(font => {
             res.send(font);
@@ -24,6 +24,12 @@ app.get('/', (req, res) => {
 
 
     font_db.then(db => {
+        Font.find({},
+            function (err, docs) {
+                if (err) return res.send(err);
+                res.send(docs);
+            });
+
         if (req.query.delete != null) {
             Font.deleteMany({}, function (err) {
                 console.log("Remove: " + err);
@@ -34,32 +40,34 @@ app.get('/', (req, res) => {
 
 function getFontById(id) {
     Font.findOne({ _id: id }, {
-        is_new: 0,
-        thumbnail: 0,
-        count: 0,
+        in: 0,
+        t: 0,
+        c: 0,
     }).then(font => {
         io.emit('font_details', font);
     });
 }
 
 function loadFonts() {
-    Font.find({}, {
-        is_new: 1,
-        thumbnail: 1,
-        count: 1,
-    }).then(font => {
+    Font.find({"$where": "function() { return this.l.toString() == 1 || this.l.toString() == 2 || this.l.toString() == 0 || this.l.toString() == 9 }"}).then(font => {
         io.emit('load_fonts', font);
     });
 }
 
+function loadFontsByLanguage(lang) {
+    Font.find({ "$where": "function() { return this.language.toString() == "+lang+" }" }).then(font => {
+        io.emit('load_done_by_lang', lang, font);
+    });
+}
+
 function loadLangs() {
-    Lang.find({}).then(lang => {
+Lang.find({}).then(lang => {
         io.emit('load_langs', lang);
     });
 }
 
 function updateFont(id, mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage) {
-    var font = { title: mTitle, url: mUrl, is_new: mNew, size: mSize, thumbnail: mThumbnail, author: mAuthor, designer: mDesigner, count: "1", language: mLanguage };
+    var font = { n: mTitle, u: mUrl, in: mNew, s: mSize, t: mThumbnail, a: mAuthor, d: mDesigner, c: "1", l: mLanguage };
     for (let key in font) {
         if (font[key] == "") {
             delete font[key];
@@ -82,7 +90,7 @@ function updateCount(id, mCount) {
 }
 
 function addFont(mTitle, mUrl, mNew, mThumbnail, mSize, mAuthor, mDesigner, mLanguage) {
-    let font = new Font({ title: mTitle, url: mUrl, is_new: mNew, size: mSize, thumbnail: mThumbnail, author: mAuthor, designer: mDesigner, count: "1", language: mLanguage });
+    let font = new Font({ n: mTitle, u: mUrl, in: mNew, s: mSize, t: mThumbnail, a: mAuthor, d: mDesigner, c: "1", l: mLanguage });
     font.save().then(() => {
         console.log(mTitle + " : " + mLanguage);
         loadFonts();
@@ -125,6 +133,10 @@ io.on('connection', (socket) => {
         loadFonts();
     });
 
+    socket.on('load_fonts_by_lang', function (userNickname, lang) {
+        loadFontsByLanguage(lang);
+    });
+
     socket.on('load_langs', function (userNickname) {
         loadLangs();
     });
@@ -162,3 +174,4 @@ server.listen(3001, () => {
     console.log('Node app is running on port 3001');
 
 });
+
